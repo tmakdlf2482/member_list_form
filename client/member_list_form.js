@@ -25,16 +25,16 @@ function tblDrawList() {
             <th>수정</th>
             <th>삭제</th>
           </tr>
-          <tr data-seq="${pkNum}">
+          <tr data-seq="${member.pkNum}">
             <td rowspan="2"><input type="checkbox" name="" id=""></td>
             <td rowspan="2">${member.pkNum}</td>
             <td>
-              <img src="" alt="회원${imageCnt}의 사진">
+              <img src="" alt="회원${member.imageCnt}의 사진">
             </td>
             <td>${member.name}</td>
             <td>${member.dept}</td>
             <td>${member.rank}</td>
-            <td rowspan="2"><button>Edit</button></td>
+            <td rowspan="2"><button onClick="handleEditBtn(this)">Edit</button></td>
             <td rowspan="2"><button onClick="handleDelBtn(this)">Delete</button></td>
           </tr>
           <tr>
@@ -113,8 +113,65 @@ function handleDelBtn(delBtn) {
   const pkNum = trElement.dataset.seq;
   
   axios.post('http://localhost:3000/delete', {pkNum: pkNum})
-  .then((res) => {
+  .then(res => {
     console.log("남은 멤버 리스트 : ", res.data);
+    tblDrawList();
+  })
+  .catch(err => {
+    console.log("서버 오류 : ", err);
+  });
+}
+
+function handleEditBtn(editBtn) {
+  const trElement = editBtn.parentElement.parentElement;
+  const pkNum = trElement.dataset.seq;
+
+  axios.post('http://localhost:3000/getEditData', {pkNum: pkNum})
+  .then(res => {
+    if (res.data.idx != -1) {
+      let pkNum = res.data.memberList[res.data.idx].pkNum;
+      let name = res.data.memberList[res.data.idx].name;
+      let dept = res.data.memberList[res.data.idx].dept;
+      let rank = res.data.memberList[res.data.idx].rank;
+      let imageCnt = res.data.memberList[res.data.idx].imageCnt;
+
+      trElement.innerHTML =
+      `
+        <td rowspan="2"><input type="checkbox" name="" id=""></td>
+        <td rowspan="2">${pkNum}</td>
+        <td>
+          <img src="" alt="회원${imageCnt}의 사진">
+        </td>
+        <td><input type="text" id="newName" value="${name}"></td>
+        <td><input type="text" id="newDept" value="${dept}"></td>
+        <td><input type="text" id="newRank" value="${rank}"></td>
+        <td rowspan="2"><button onClick="saveEdit(this)">저장</button></td>
+        <td rowspan="2"><button onClick="handleDelBtn(this)">삭제</button></td>
+      `
+    }
+  })
+  .catch(err => {
+    console.log("서버 오류 : ", err);
+  });
+}
+
+function saveEdit(saveBtn) {
+  const trElement = saveBtn.parentElement.parentElement;
+  const pkNum = trElement.dataset.seq;
+
+  let newName = trElement.querySelector('#newName').value;
+  let newDept = trElement.querySelector('#newDept').value;
+  let newRank = trElement.querySelector('#newRank').value;
+
+  let body = {
+    pkNum: pkNum,
+    newName: newName,
+    newDept: newDept,
+    newRank: newRank,
+  };
+
+  axios.post('http://localhost:3000/edit', body)
+  .then(res => {
     tblDrawList();
   })
   .catch(err => {
