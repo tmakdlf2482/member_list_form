@@ -27,9 +27,9 @@ member_form.addEventListener('submit', (e) => {
         <td>
           <img src="" alt="사원${imageCnt++}의 사진">
         </td>
-        <td>${res.data[0].name}</td>
-        <td>${res.data[0].dept}</td>
-        <td>${res.data[0].rank}</td>
+        <td>${res.data[res.data.length - 1].name}</td>
+        <td>${res.data[res.data.length - 1].dept}</td>
+        <td>${res.data[res.data.length - 1].rank}</td>
         <td rowspan="2"><button>Edit</button></td>
         <td rowspan="2"><button>Delete</button></td>
       </tr>
