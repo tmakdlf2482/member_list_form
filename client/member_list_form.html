@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원 관리 페이지</title>
+  <link rel="stylesheet" href="member_list_form.css">
+</head>
+<body>
+  <div class="container">
+    <div>
+      <!-- 제목 -->
+      <h1 class="element">회원 관리 페이지</h1>
+    </div>
+    <div>
+      <!-- 입력 폼 -->
+      <form action="" method="post">
+        <table>
+          <tr>
+            <th><label for="name">이름</label></th>
+            <td><input type="text" name="name" id="name" placeholder="성명을 입력 하세요."></td>
+          </tr>
+          <tr>
+            <th><label for="dept">부서</label></th>
+            <td><input type="text" name="dept" id="dept" placeholder="부서를 입력 하세요."></td>
+          </tr>
+          <tr>
+            <th><label for="rank">직급</label></th>
+            <td><input type="text" name="rank" id="rank" placeholder="직급을 입력하세요."></td>
+          </tr>
+          <tr>
+            <th><label for="photo">사진</label></th>
+            <td><input type="file" name="photo" id="photo"></td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="submit" class="saveBtn" value="새 사원 추가" style="color: white; cursor: pointer;">
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <hr>
+    <div>
+      <!-- 목록 -->
+      <p>
+        <button type="button">선택 삭제</button>
+        |
+        검색 :
+        <select name="" id="">
+          <option value="name">번호</option>
+          <option value="name">사원명</option>
+          <option value="name">부서</option>
+          <option value="name">직급</option>
+        </select>
+        <input type="text">
+      </p>
+      <table class="memListTbl">
+        <tr>
+          <th>
+            <input type="checkbox" name="" id="">
+          </th>
+          <th>번호</th>
+          <th>사진</th>
+          <th>사원명</th>
+          <th>부서</th>
+          <th>직급</th>
+          <th>수정</th>
+          <th>삭제</th>
+        </tr>
+        <tr>
+          <td rowspan="2"><input type="checkbox" name="" id=""></td>
+          <td rowspan="2">1043</td>
+          <td>
+            <img src="" alt="사원1의 사진">
+          </td>
+          <td>홍길동</td>
+          <td>개발</td>
+          <td>대리</td>
+          <td rowspan="2"><button>Edit</button></td>
+          <td rowspan="2"><button>Delete</button></td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <table class="subTbl" width="100%" cellspacing="0">
+              <tr>
+                <td width="10px">번호</td>
+                <td>댓글내용</td>
+                <td>작성자</td>
+                <td>수정</td>
+                <td>삭제</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>멋진 사진입니다.</td>
+                <td>박문수</td>
+                <td>수정</td>
+                <td>삭제</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>좋아요^^ 퍼가요~</td>
+                <td>일지매</td>
+                <td>수정</td>
+                <td>삭제</td>
+              </tr>
+              <tr>
+                <td colspan="5">
+                  댓글
+                  <input type="text">
+                  작성자
+                  <input type="text">
+                  <button>댓글입력</button>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <script src="member_list_form.js" defer></script>
+</body>
+</html>
