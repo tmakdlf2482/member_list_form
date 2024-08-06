@@ -82,7 +82,7 @@ function tblDrawList() {
     });
   })
   .catch(err => {
-    console.log(err);
+    console.log("서버 오류 : ", err);
   });
 }
 
@@ -172,7 +172,7 @@ function handleDelBtn(delBtn) {
   
   axios.post('http://localhost:3000/post/delete', {pkNum: pkNum})
   .then(res => {
-    console.log("남은 멤버 리스트 : ", res.data);
+    // console.log("남은 멤버 리스트 : ", res.data);
     tblDrawList();
   })
   .catch(err => {
@@ -203,7 +203,57 @@ function handleRepleSaveBtn(saveBtn) {
 };
 
 function handleRepleEditBtn(editBtn) {
-  
+  const trElement = editBtn.parentElement.parentElement;
+  const pkNum = trElement.dataset.seq;  // 게시글 번호
+  const repleNum = editBtn.closest('tr').querySelector('td').innerText; // 댓글 번호
+
+  let body = {
+    pkNum: pkNum,
+    repleNum: repleNum,
+  };
+
+  axios.post('http://localhost:3000/reple/getRepleEditData', body)
+  .then(res => {
+    let repleNum = res.data.memberList[res.data.idx].reple[res.data.idx2].repleNum;
+    let repleContent = res.data.memberList[res.data.idx].reple[res.data.idx2].repleContent;
+    let repleWriter = res.data.memberList[res.data.idx].reple[res.data.idx2].repleWriter;
+
+    trElement.innerHTML =
+      `
+        <td>${repleNum}</td>
+        <td><input type="text" id="newRepleContent" value="${repleContent}"></td>
+        <td><input type="text" id="newRepleWriter" value="${repleWriter}"></td>
+        <td><button onClick="saveRepleEdit(this)">저장</button></td>
+        <td><button onClick="handleRepleDelBtn(this)">Delete</button></td>
+      `;
+  })
+  .catch(err => {
+    console.log("서버 오류 : ", err);
+  });
+};
+
+function saveRepleEdit(saveBtn) {
+  const trElement = saveBtn.parentElement.parentElement;
+  const pkNum = trElement.dataset.seq;  // 게시글 번호
+  const repleNum = saveBtn.closest('tr').querySelector('td').innerText; // 댓글 번호
+
+  let newRepleContent = trElement.querySelector('#newRepleContent').value;
+  let newRepleWriter = trElement.querySelector('#newRepleWriter').value;
+
+  let body = {
+    pkNum: pkNum,
+    repleNum: repleNum,
+    newRepleContent: newRepleContent,
+    newRepleWriter: newRepleWriter,
+  };
+
+  axios.post('http://localhost:3000/reple/edit', body)
+  .then(res => {
+    tblDrawList();
+  })
+  .catch(err => {
+    console.log("서버 오류 : ", err);
+  });
 }
 
 function handleRepleDelBtn(delBtn) {

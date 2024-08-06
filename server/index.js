@@ -122,3 +122,38 @@ app.post('/reple/delete', (req, res) => {
   
   res.status(200).json(memberList);
 });
+
+app.post('/reple/getRepleEditData', (req, res) => {
+  const pkNum = parseInt(req.body.pkNum); // 게시글 번호
+  const repleNum = req.body.repleNum;     // 댓글 번호
+
+  let idx = memberList.findIndex(ind => { // 사용자가 누른 게시글 번호 찾기
+    return ind.pkNum == pkNum;
+  });
+
+  let idx2 = memberList[idx].reple.findIndex(ind => { // 사용자가 누른 게시글 번호에 맞는 댓글 번호 찾기
+    return ind.repleNum == repleNum;
+  });
+
+  res.status(200).json( {idx: idx, idx2: idx2, memberList: memberList} );
+});
+
+app.post('/reple/edit', (req, res) => {
+  const pkNum = parseInt(req.body.pkNum); // 게시글 번호
+  const repleNum = req.body.repleNum;     // 댓글 번호
+
+  let idx = memberList.findIndex(ind => { // 사용자가 누른 게시글 번호 찾기
+    return ind.pkNum == pkNum;
+  });
+
+  let idx2 = memberList[idx].reple.findIndex(ind => { // 사용자가 누른 게시글 번호에 맞는 댓글 번호 찾기
+    return ind.repleNum == repleNum;
+  });
+
+  if (idx != -1) {
+    memberList[idx].reple[idx2].repleContent = req.body.newRepleContent;
+    memberList[idx].reple[idx2].repleWriter = req.body.newRepleWriter;
+  }
+
+  res.status(200).json(memberList);
+});
