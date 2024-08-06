@@ -2,7 +2,7 @@ const member_form = document.querySelector('#member_form');
 const memListTbl = document.querySelector('.memListTbl');
 
 function tblDrawList() {
-  axios.post('http://localhost:3000/list')
+  axios.post('http://localhost:3000/post/list')
   .then(res => {
     let pkNum = 1;
     let imageCnt = 1;
@@ -10,6 +10,20 @@ function tblDrawList() {
     memListTbl.innerHTML = "";
 
     res.data.forEach((member) => {
+      let repleRows = ''; // 댓글 행들을 저장할 변수
+
+      member.reple.forEach(reple => {
+        repleRows += `
+          <tr>
+            <td>${reple.repleNum}</td>
+            <td>${reple.repleContent}</td>
+            <td>${reple.repleWriter}</td>
+            <td>수정</td>
+            <td>삭제</td>
+          </tr>
+        `;
+      })
+
       memListTbl.innerHTML +=
       `
         <table class="memListTbl">
@@ -47,27 +61,12 @@ function tblDrawList() {
                   <td>수정</td>
                   <td>삭제</td>
                 </tr>
-                <tr>
-                  <td>1</td>
-                  <td>멋진 사진입니다.</td>
-                  <td>박문수</td>
-                  <td>수정</td>
-                  <td>삭제</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>좋아요^^ 퍼가요~</td>
-                  <td>일지매</td>
-                  <td>수정</td>
-                  <td>삭제</td>
-                </tr>
-                <tr>
+                ${repleRows} <!-- 댓글 행들을 여기에 추가 -->
+                <tr data-seq="${member.pkNum}">
                   <td colspan="5">
-                    댓글
-                    <input type="text">
-                    작성자
-                    <input type="text">
-                    <button>댓글입력</button>
+                      댓글<input type="text" id="repleContent">
+                      작성자<input type="text" id="repleWriter">
+                      <button onClick="handleRepleSaveBtn(this)">댓글입력</button>
                   </td>
                 </tr>
               </table>
@@ -92,7 +91,7 @@ member_form.addEventListener('submit', (e) => {
   let dept = document.querySelector('#dept').value;
   let rank = document.querySelector('#rank').value;
 
-  axios.post('http://localhost:3000/submit', {
+  axios.post('http://localhost:3000/post/submit', {
     name: name,
     dept: dept,
     rank: rank,
@@ -112,7 +111,7 @@ function handleDelBtn(delBtn) {
   const trElement = delBtn.parentElement.parentElement;
   const pkNum = trElement.dataset.seq;
   
-  axios.post('http://localhost:3000/delete', {pkNum: pkNum})
+  axios.post('http://localhost:3000/post/delete', {pkNum: pkNum})
   .then(res => {
     console.log("남은 멤버 리스트 : ", res.data);
     tblDrawList();
@@ -126,7 +125,9 @@ function handleEditBtn(editBtn) {
   const trElement = editBtn.parentElement.parentElement;
   const pkNum = trElement.dataset.seq;
 
-  axios.post('http://localhost:3000/getEditData', {pkNum: pkNum})
+  console.log(pkNum);
+
+  axios.post('http://localhost:3000/post/getEditData', {pkNum: pkNum})
   .then(res => {
     if (res.data.idx != -1) {
       let pkNum = res.data.memberList[res.data.idx].pkNum;
@@ -147,7 +148,7 @@ function handleEditBtn(editBtn) {
         <td><input type="text" id="newRank" value="${rank}"></td>
         <td rowspan="2"><button onClick="saveEdit(this)">저장</button></td>
         <td rowspan="2"><button onClick="handleDelBtn(this)">삭제</button></td>
-      `
+      `;
     }
   })
   .catch(err => {
@@ -170,7 +171,7 @@ function saveEdit(saveBtn) {
     newRank: newRank,
   };
 
-  axios.post('http://localhost:3000/edit', body)
+  axios.post('http://localhost:3000/post/edit', body)
   .then(res => {
     tblDrawList();
   })
@@ -178,3 +179,25 @@ function saveEdit(saveBtn) {
     console.log("서버 오류 : ", err);
   });
 }
+
+function handleRepleSaveBtn(saveBtn) {
+  const trElement = saveBtn.parentElement.parentElement;
+  const pkNum = trElement.dataset.seq;
+
+  let repleContent = trElement.querySelector('#repleContent').value;
+  let repleWriter = trElement.querySelector('#repleWriter').value;
+
+  let body = {
+    pkNum: pkNum,
+    repleContent: repleContent,
+    repleWriter: repleWriter,
+  };
+
+  axios.post(`http://localhost:3000/reple/submit`, body)
+  .then(res => {
+    tblDrawList();
+  })
+  .catch(err => {
+    console.log("서버 오류 : ", err);
+  });
+};
