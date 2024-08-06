@@ -20,7 +20,7 @@ server.listen(app.get('port'), () => {
 });
 
 app.post('/post/list', (req, res) => {
-  console.log("남은 회원 리스트 :", JSON.stringify(memberList));
+  console.log("회원 리스트 :", JSON.stringify(memberList));
   console.log("------------------------------------------------------------------------------------------");
 
   res.status(200).json(memberList);
@@ -101,5 +101,24 @@ app.post('/reple/submit', (req, res) => {
     memberList[idx].reple.push(newReple);
   }
 
+  res.status(200).json(memberList);
+});
+
+app.post('/reple/delete', (req, res) => {
+  const pkNum = parseInt(req.body.pkNum); // 게시글 번호
+  const repleNum = req.body.repleNum;     // 댓글 번호
+
+  let idx = memberList.findIndex(ind => { // 사용자가 누른 게시글 번호 찾기
+    return ind.pkNum == pkNum;
+  });
+
+  let idx2 = memberList[idx].reple.findIndex(ind => { // 사용자가 누른 게시글 번호에 맞는 댓글 번호 찾기
+    return ind.repleNum == repleNum;
+  });
+
+  if (idx != -1) {
+    memberList[idx].reple.splice(idx2, 1);
+  }
+  
   res.status(200).json(memberList);
 });

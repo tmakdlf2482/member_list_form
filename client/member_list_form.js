@@ -5,6 +5,7 @@ function tblDrawList() {
   axios.post('http://localhost:3000/post/list')
   .then(res => {
     let pkNum = 1;
+    let repleNum = 1;
     let imageCnt = 1;
     
     memListTbl.innerHTML = "";
@@ -14,12 +15,12 @@ function tblDrawList() {
 
       member.reple.forEach(reple => {
         repleRows += `
-          <tr>
+          <tr data-seq="${member.pkNum}">
             <td>${reple.repleNum}</td>
             <td>${reple.repleContent}</td>
             <td>${reple.repleWriter}</td>
-            <td>수정</td>
-            <td>삭제</td>
+            <td><button onClick="handleRepleEditBtn(this)">Edit</button></td>
+            <td><button onClick="handleRepleDelBtn(this)">Delete</button></td>
           </tr>
         `;
       })
@@ -76,6 +77,7 @@ function tblDrawList() {
       `;
 
       pkNum++;
+      repleNum++;
       imageCnt++;
     });
   })
@@ -107,25 +109,9 @@ member_form.addEventListener('submit', (e) => {
   });
 });
 
-function handleDelBtn(delBtn) {
-  const trElement = delBtn.parentElement.parentElement;
-  const pkNum = trElement.dataset.seq;
-  
-  axios.post('http://localhost:3000/post/delete', {pkNum: pkNum})
-  .then(res => {
-    console.log("남은 멤버 리스트 : ", res.data);
-    tblDrawList();
-  })
-  .catch(err => {
-    console.log("서버 오류 : ", err);
-  });
-}
-
 function handleEditBtn(editBtn) {
   const trElement = editBtn.parentElement.parentElement;
   const pkNum = trElement.dataset.seq;
-
-  console.log(pkNum);
 
   axios.post('http://localhost:3000/post/getEditData', {pkNum: pkNum})
   .then(res => {
@@ -180,6 +166,20 @@ function saveEdit(saveBtn) {
   });
 }
 
+function handleDelBtn(delBtn) {
+  const trElement = delBtn.parentElement.parentElement;
+  const pkNum = trElement.dataset.seq;
+  
+  axios.post('http://localhost:3000/post/delete', {pkNum: pkNum})
+  .then(res => {
+    console.log("남은 멤버 리스트 : ", res.data);
+    tblDrawList();
+  })
+  .catch(err => {
+    console.log("서버 오류 : ", err);
+  });
+}
+
 function handleRepleSaveBtn(saveBtn) {
   const trElement = saveBtn.parentElement.parentElement;
   const pkNum = trElement.dataset.seq;
@@ -193,7 +193,30 @@ function handleRepleSaveBtn(saveBtn) {
     repleWriter: repleWriter,
   };
 
-  axios.post(`http://localhost:3000/reple/submit`, body)
+  axios.post('http://localhost:3000/reple/submit', body)
+  .then(res => {
+    tblDrawList();
+  })
+  .catch(err => {
+    console.log("서버 오류 : ", err);
+  });
+};
+
+function handleRepleEditBtn(editBtn) {
+  
+}
+
+function handleRepleDelBtn(delBtn) {
+  const trElement = delBtn.parentElement.parentElement;
+  const pkNum = trElement.dataset.seq; // 게시글 번호
+  const repleNum = trElement.rowIndex; // 댓글 번호
+
+  let body = {
+    pkNum: pkNum,
+    repleNum: repleNum,
+  };
+
+  axios.post('http://localhost:3000/reple/delete', body)
   .then(res => {
     tblDrawList();
   })
